@@ -23,15 +23,9 @@ def get_lane_center(lanes):
 
         y_intercept2 = y2b - x2b * slope2
         x_intercept2 = -y_intercept2/slope2
-
-        print(f"x_intercept1: {x_intercept1}")
-        print(f"x_intercept2: {x_intercept2}")
         
         mid_x_intercept = (x_intercept1 + x_intercept2) / 2
         midslope = 1/(((1/slope1) + (1/slope2))/2)
-
-        print(f"mid_x_intercept: {mid_x_intercept}")
-        print(f"midslope: {midslope}")
 
         if np.abs(closest[0]) <= np.abs(mid_x_intercept):
             continue
