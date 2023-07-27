@@ -15,12 +15,23 @@ def get_lane_center(lanes):
         x1a, y1a, x2a, y2a = line1
         x1b, y1b, x2b, y2b = line2
 
-        midpoint1 = ((x1a + x1b)/2, (y1a + y1b)/2)
-        midpoint2 = ((x2a + x2b)/2, (y2a + y2b)/2)
+        slope1 = (y2a - y1a) / (x2a - x1a)
+        slope2 = (y2b - y1b) / (x2b - x1b)
+
+        y_intercept1 = y2a - x2a * slope1
+        x_intercept1 = -y_intercept1/slope1
+
+        y_intercept2 = y2b - x2b * slope2
+        x_intercept2 = -y_intercept2/slope2
+
+        print(f"x_intercept1: {x_intercept1}")
+        print(f"x_intercept2: {x_intercept2}")
         
-        midslope = (midpoint2[1] - midpoint1[1])/(midpoint2[0] - midpoint1[0])
-        mid_y_intercept = midpoint1[1] - midslope * midpoint1[0]
-        mid_x_intercept = -mid_y_intercept/midslope
+        mid_x_intercept = (x_intercept1 + x_intercept2) / 2
+        midslope = 1/(((1/slope1) + (1/slope2))/2)
+
+        print(f"mid_x_intercept: {mid_x_intercept}")
+        print(f"midslope: {midslope}")
 
         if np.abs(closest[0]) <= np.abs(mid_x_intercept):
             continue
@@ -46,8 +57,10 @@ def recommend_direction(center, slope):
     else:
         print("Strafe left")
         direction = "left"
-    if 1/slope > 0:
+    if slope > 30 or slope < -30:
+        print("Forward")
+    if slope > 0:
         print("Turn right")
-    if 1/slope < 0:
+    if slope < 0:
         print("Turn Left")
     return direction
