@@ -35,15 +35,16 @@ def get_lane_center(lanes):
     return closest
 
 def draw_center_lane(img, xPoint1, yPoint1 = 1080, xPoint2 = 0, yPoint2 = 2125):
-    cv2.line(img, (int(xPoint1), yPoint1), (int(xPoint2), int(yPoint2)), (0,0,255), 6)
+    cv2.line(img, (int(xPoint1), yPoint1), (int(xPoint2), int(yPoint2)), (255,0,0), 6)
     plt.imshow(img)
     plt.show()
     return img
 
 def recommend_direction(center, slope):
     
-    halfOfRes = 1920/2
-    if center == halfOfRes:
+    halfOfRes = 1875
+    if center < halfOfRes + 20 and center > halfOfRes-20:
+        print("Go Forward")
         direction = "forward"
     elif center > halfOfRes:# more than halfway
         print("Strafe right")
@@ -51,10 +52,11 @@ def recommend_direction(center, slope):
     else:
         print("Strafe left")
         direction = "left"
+    
     if slope > 30 or slope < -30:
         print("Forward")
-    if slope > 0:
-        print("Turn right")
-    if slope < 0:
+    elif slope > 0:
         print("Turn Left")
+    elif slope < 0:
+        print("Turn Right")
     return direction
