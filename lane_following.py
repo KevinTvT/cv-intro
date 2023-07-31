@@ -40,9 +40,9 @@ def draw_center_lane(img, xPoint1, yPoint1 = 1080, xPoint2 = 0, yPoint2 = 2125):
     plt.show()
     return img
 
-def recommend_direction(center, slope):
+def recommend_direction(center, slope, totalRes=1300):
     
-    halfOfRes = 1875
+    halfOfRes = totalRes/2
     if center < halfOfRes + 20 and center > halfOfRes-20:
         print("Go Forward")
         direction = "forward"
@@ -55,8 +55,11 @@ def recommend_direction(center, slope):
     
     if slope > 30 or slope < -30:
         print("Forward")
+        angle = 0
     elif slope > 0:
         print("Turn Left")
+        angle = np.arctan(slope)
     elif slope < 0:
         print("Turn Right")
-    return direction
+        angle = np.arctan(slope)
+    return direction, angle

@@ -3,6 +3,11 @@ import math
 import matplotlib.pyplot as plt
 from random import randrange
 
+def ret_blur(img):
+    blur = cv2.GaussianBlur(img,(5,5),cv2.BORDER_DEFAULT)
+    plt.imshow(blur)
+    return blur
+
 def ret_gray(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     plt.imshow(gray)
@@ -65,7 +70,8 @@ def rmvExcessLines(lines):
     return newLines
 
 def detect_lines(img, threshold1=50, threshold2=150, apertureSize=3, minLineLength=100, maxLineGap=10):
-    gray = ret_gray(img)
+    blur = ret_blur(img)
+    gray = ret_gray(blur)
     edges = ret_edges(gray, threshold1, threshold2, apertureSize)
     lines = ret_lines(edges, minLineLength, maxLineGap)
     lineList = rmvExcessLines(lines)
@@ -79,7 +85,6 @@ def draw_lines(img, lines, color=(0, 255, 0)):
         cv2.line(img, (x1, y1), (x2, y2), color, 2)
         cv2.putText(img, str(slope), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 2, color, cv2.LINE_4)
     plt.imshow(img)
-    plt.show()
     return img
 
 def get_slopes_intercepts(lines):
@@ -105,7 +110,7 @@ def detect_lanes(lines):
                 
                 InterceptDist = abs(xInterceptList[i]-xInterceptList[j])
                 slopeDiff = abs(1/ slopeList[i]-1 /slopeList[j]) 
-                if(InterceptDist > 100 and InterceptDist< 10000 and slopeDiff< 1):
+                if(InterceptDist > 100 and slopeDiff< 1):
                     lane1 = lines[i][0]
                     lane2 = lines[j][0]
                     addedlanes = [lane1,lane2]
@@ -121,5 +126,4 @@ def draw_lanes(img, lanes):
             cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
             cv2.putText(img, str(slope), (int(x1), int(y1)), cv2.FONT_HERSHEY_SIMPLEX, 3, color, 6)
     plt.imshow(img)
-    plt.show()
     return img
