@@ -29,37 +29,39 @@ def detect_april_tags(img):
 
     for tag in tags:
         for idx in range(len(tag.corners)):
-            cv2.line(color_img, tuple(tag.corners[idx - 1, :].astype(int)), tuple(tag.corners[idx, :].astype(int)), (0, 255, 0))
+            cv2.line(color_img, tuple(tag.corners[idx - 1, :].astype(int)), tuple(tag.corners[idx, :].astype(int)), (255, 0, 0), 5)
 
         cv2.putText(color_img, str(tag.tag_id),
                     org=(tag.corners[0, 0].astype(int) + 10, tag.corners[0, 1].astype(int) + 10),
                     fontFace=cv2.FONT_HERSHEY_SIMPLEX, 
                     fontScale=0.8,
                     color=(0, 0, 255))
+    try:
+        x_avg_error = sum(x_errors) / len(x_errors)
+        y_avg_error = sum(y_errors) / len(y_errors)
 
-    x_avg_error = sum(x_errors) / len(x_errors)
-    y_avg_error = sum(y_errors) / len(y_errors)
+        # Crosshair
+        cv2.line(color_img, (int(img.shape[1]/2) - 10, int(img.shape[0]/2)), (int(img.shape[1]/2) + 10, int(img.shape[0]/2)), (0, 0, 255), 5)
+        cv2.line(color_img, (int(img.shape[1]/2), int(img.shape[0]/2) - 10), (int(img.shape[1]/2), int(img.shape[0]/2) + 10), (0, 0, 255), 5)
 
-    # Crosshair
-    cv2.line(color_img, (int(img.shape[1]/2) - 10, int(img.shape[0]/2)), (int(img.shape[1]/2) + 10, int(img.shape[0]/2)), (0, 0, 255), 5)
-    cv2.line(color_img, (int(img.shape[1]/2), int(img.shape[0]/2) - 10), (int(img.shape[1]/2), int(img.shape[0]/2) + 10), (0, 0, 255), 5)
+        # AprilTag Crosshair
+        cv2.line(color_img, (int(img.shape[1]/2 + x_avg_error) - 10, int(img.shape[0]/2 + y_avg_error)), (int(img.shape[1]/2 + x_avg_error) + 10 , int(img.shape[0]/2 + y_avg_error)), (255, 0, 0), 5)
+        cv2.line(color_img, (int(img.shape[1]/2 + x_avg_error), int(img.shape[0]/2 + y_avg_error) - 10), (int(img.shape[1]/2 + x_avg_error), int(img.shape[0]/2 + y_avg_error) + 10), (255, 0, 0), 5)
 
-    # AprilTag Crosshair
-    cv2.line(color_img, (int(img.shape[1]/2 + x_avg_error) - 10, int(img.shape[0]/2 + y_avg_error)), (int(img.shape[1]/2 + x_avg_error) + 10 , int(img.shape[0]/2 + y_avg_error)), (255, 0, 0), 5)
-    cv2.line(color_img, (int(img.shape[1]/2 + x_avg_error), int(img.shape[0]/2 + y_avg_error) - 10), (int(img.shape[1]/2 + x_avg_error), int(img.shape[0]/2 + y_avg_error) + 10), (255, 0, 0), 5)
+        # Line2Err
+        cv2.line(color_img, (int(img.shape[1]/2), int(img.shape[0] / 2)), (int(img.shape[1]/2 + x_avg_error), int(img.shape[0]/2 + y_avg_error)), (255, 0, 0), 5)
 
-    # Line2Err
-    cv2.line(color_img, (int(img.shape[1]/2), int(img.shape[0] / 2)), (int(img.shape[1]/2 + x_avg_error), int(img.shape[0]/2 + y_avg_error)), (255, 0, 0), 5)
-
-    print(f"tag translateion: {tag.pose_t}")
-    print(f"tag rotateions: {tag.pose_R}")
-    print(f"x error: {x_avg_error}")
-    print(f"y error: {y_avg_error}")
-
+        # print(f"tag translateion: {tag.pose_t}")
+        # print(f"tag rotateions: {tag.pose_R}")
+        # print(f"x error: {x_avg_error}")
+        # print(f"y error: {y_avg_error}")
+        
+        return color_img, tags, x_avg_error, y_avg_error
+    except:
+         pass
     # plt.imshow(color_img)
     # plt.show()
 
-    return color_img, tags, x_avg_error, y_avg_error
 
 def draw_tags(img, tags):
     for tag in tags:
